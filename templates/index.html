@@ -1,17 +1,30 @@
-<!doctype html>
-<html lang="pt-BR">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>NetMonitor</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-  <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
-</head>
-<body>
-  <main>
-    <h1>NetMonitor</h1>
-    <p>O NetMonitor está funcionando.</p>
-    <p>Dia 1: estrutura inicial e módulo de conectividade.</p>
-  </main>
-</body>
-</html>
+{% extends 'base.html' %}
+{% block content %}
+<p>O NetMonitor está funcionando.</p>
+<h2>Dispositivos cadastrados</h2>
+<a class="button" href="{{ url_for('device_form') }}">Adicionar dispositivo</a>
+<section class="devices">
+{% for device in devices %}
+<article>
+  <h3>{{ device.name }}</h3>
+  <p><code>{{ device.address }}</code> · {{ device.device_type }}</p>
+  <p>{{ device.description }}</p>
+  {% if latest[device.id] %}{% set check = latest[device.id][0] %}
+  <p>Última verificação: <strong>{{ check.status }}</strong>
+  {% if check.latency_ms is not none %} · {% if check.latency_is_upper_bound %}&lt;{% endif %}{{ check.latency_ms }} ms{% endif %}</p>
+  <p><time>{{ check.checked_at }}</time> (UTC)</p>
+  {% if check.error %}<p>{{ check.error }}</p>{% endif %}
+  {% else %}<p>Nenhuma verificação realizada.</p>{% endif %}
+  <div class="actions">
+    <a href="{{ url_for('device_form', device_id=device.id) }}">Editar</a>
+    <a href="{{ url_for('delete', device_id=device.id) }}">Excluir</a>
+    <a href="{{ url_for('history', device_id=device.id) }}">Histórico</a>
+    <form method="post" action="{{ url_for('check', device_id=device.id) }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+      <button type="submit">Verificar agora</button>
+    </form>
+  </div>
+</article>
+{% else %}<p>Nenhum dispositivo cadastrado. Adicione um dispositivo para começar.</p>{% endfor %}
+</section>
+{% endblock %}

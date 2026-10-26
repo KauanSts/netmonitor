@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Excluir dispositivo</h2>
+<p>Deseja excluir {{ device.name }} ({{ device.address }}) e todo o seu histórico? Esta operação é definitiva.</p>
+<form method="post">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+  <label><input type="checkbox" name="confirm" value="yes" required> Confirmo a exclusão do dispositivo e do histórico.</label>
+  <div class="actions"><button type="submit">Excluir definitivamente</button><a href="{{ url_for('index') }}">Cancelar</a></div>
+</form>
+{% endblock %}

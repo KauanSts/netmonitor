@@ -7,12 +7,14 @@ import subprocess
 
 
 def validate_target(target: str) -> str:
-    """Aceita IPv4 ou hostname DNS ASCII, sem opções, URLs ou IPv6."""
+    """Aceita IPv4, IPv6 sem escopo ou hostname DNS ASCII; rejeita URLs e opções."""
     if not isinstance(target, str) or not target or target != target.strip():
-        raise ValueError("Informe um IPv4 ou domínio válido.")
+        raise ValueError("Informe um IPv4, IPv6 ou domínio válido.")
     try:
-        return str(ipaddress.IPv4Address(target))
-    except ipaddress.AddressValueError:
+        if "%" in target:
+            raise ValueError("IPv6 com identificador de interface não é suportado.")
+        return str(ipaddress.ip_address(target))
+    except ValueError:
         pass
     if re.fullmatch(r"[0-9.]+", target):
         raise ValueError("IPv4 inválido.")
@@ -39,10 +41,11 @@ def check_connectivity(target: str, timeout: float = 2.0) -> dict:
     system = platform.system()
     result = {"target": target, "status": "error", "latency_ms": None,
               "latency_is_upper_bound": False, "error": None}
+    family = "-6" if ":" in target else "-4"
     if system == "Windows":
-        command = ["ping", "-4", "-n", "1", "-w", str(math.ceil(timeout * 1000)), target]
+        command = ["ping", family, "-n", "1", "-w", str(math.ceil(timeout * 1000)), target]
     elif system == "Linux":
-        command = ["ping", "-4", "-n", "-c", "1", "-W", str(math.ceil(timeout)), target]
+        command = ["ping", family, "-n", "-c", "1", "-W", str(math.ceil(timeout)), target]
     else:
         result["error"] = f"Sistema não suportado: {system}"
         return result
@@ -64,6 +67,8 @@ def check_connectivity(target: str, timeout: float = 2.0) -> dict:
         if match:
             result["latency_ms"] = float(match[2].replace(",", "."))
             result["latency_is_upper_bound"] = match[1] == "<"
+    elif re.search(r"could not find host|name or service not known|temporary failure in name resolution|unknown host|não.*encontrar.*host|nodename nor servname", output, re.I):
+        result["error"] = "Não foi possível resolver o destino DNS."
     elif re.search(r"timed?\s*out|tempo.*esgotado|esgotado.*tempo|100%\s*(?:packet loss|de perda)", output, re.I):
         result.update(status="timeout", error="Nenhuma resposta dentro do prazo.")
     elif process.returncode in (0, 1):

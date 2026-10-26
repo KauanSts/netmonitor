@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Histórico de {{ device.name }}</h2>
+<p>Até 100 verificações mais recentes, em UTC. As anteriores permanecem no banco.</p>
+{% for check in checks %}
+<article><p><time>{{ check.checked_at }}</time> · <strong>{{ check.status }}</strong>
+{% if check.latency_ms is not none %} · {% if check.latency_is_upper_bound %}&lt;{% endif %}{{ check.latency_ms }} ms{% endif %}</p>
+{% if check.error %}<p>{{ check.error }}</p>{% endif %}</article>
+{% else %}<p>Nenhuma verificação realizada.</p>{% endfor %}
+<a href="{{ url_for('index') }}">Voltar</a>
+{% endblock %}

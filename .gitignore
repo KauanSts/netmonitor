@@ -218,3 +218,14 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Bancos locais e arquivos auxiliares SQLite
+*.sqlite
+*.sqlite3
+*.db
+*.sqlite*-journal
+*.sqlite*-wal
+*.sqlite*-shm
+*.db-journal
+*.db-wal
+*.db-shm

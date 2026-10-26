@@ -66,7 +66,7 @@ class ConnectivityTests(unittest.TestCase):
 
     @patch("monitor.subprocess.run")
     def test_invalid_target(self, run):
-        for target in ["", "-c", "example.com;whoami", "https://example.com", "999.1.1.1", "::1", "a..b", " a.com", None]:
+        for target in ["", "-c", "example.com;whoami", "https://example.com", "999.1.1.1", ":::1", "a..b", " a.com", None]:
             with self.subTest(target=target), self.assertRaises(ValueError):
                 check_connectivity(target)
         run.assert_not_called()

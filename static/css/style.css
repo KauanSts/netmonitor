@@ -1,2 +1,17 @@
-body { font-family: system-ui, sans-serif; background: #f3f6fa; color: #172b4d; margin: 0; }
-main { max-width: 48rem; margin: 4rem auto; padding: 2rem; background: white; border-radius: 0.75rem; }
+:root { color-scheme: dark; font-family: system-ui, sans-serif; background: #242424; color: #f1f1f1; }
+* { box-sizing: border-box; }
+body { margin: 0; }
+main { max-width: 68rem; margin: 2rem auto; padding: 1.5rem; }
+h1, h2, h3 { color: #ff9b50; }
+a { color: #ffac70; text-underline-offset: .2em; }
+header a { text-decoration: none; }
+article { padding: 1.3rem; margin: 1rem 0; background: #303030; border: 1px solid #666; border-radius: .6rem; overflow-wrap: anywhere; }
+.devices { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 26rem), 1fr)); gap: 1rem; }
+button, .button { display: inline-block; background: #ff923d; color: #171717; padding: .7rem 1rem; border: 0; border-radius: .3rem; font: inherit; font-weight: 600; cursor: pointer; text-decoration: none; }
+.actions { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; margin-top: 1rem; }
+.device-form { display: grid; gap: .6rem; max-width: 38rem; }
+input:not([type=checkbox]):not([type=hidden]), select, textarea { width: 100%; padding: .75rem; background: #303030; color: #fff; border: 1px solid #999; border-radius: .3rem; font: inherit; }
+label { margin-top: .5rem; }
+.notice { padding: 1rem; border-left: .3rem solid #ff923d; background: #303030; }
+:focus-visible { outline: 3px solid #ffc499; outline-offset: 3px; }
+@media (max-width: 600px) { main { margin: 0; padding: 1rem; } }
